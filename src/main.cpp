@@ -2,7 +2,18 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <fstream>
-#include<sstream>
+#include <sstream>
+#include <cassert>
+
+static void GLClearError(){
+    while(glGetError() != GL_NO_ERROR);
+}
+
+static void GLCheckError(){
+    while(GLenum error = glGetError()){
+        std::cout<<"[OpenGL Error] ("<<error<<")"<<std::endl;
+    }
+}
 
 struct ShaderProgramSource{
     std::string vertexSource;
@@ -93,6 +104,8 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
+    glfwSwapInterval(1);
+
      // Load GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialize GLAD!" << std::endl;
@@ -132,13 +145,29 @@ int main(void)
    
     unsigned int shader = createShader(source.vertexSource, source.fragmentSource);
     glUseProgram(shader);
+
+    int location = glGetUniformLocation(shader, "u_Colour");
+    assert(location != -1);
+
+    float r = 0.0f;
+    float increment = 0.05f;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+        if(r>1.0f){
+            increment = -0.01f;
+        }
+        else if(r<0.0f){
+            increment = 0.01f;
+        }
+
+        r+=increment;
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
