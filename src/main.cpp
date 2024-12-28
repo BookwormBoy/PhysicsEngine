@@ -1,19 +1,14 @@
-#include <glad/glad.h>
+#include "renderer.h"
 #include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cassert>
 
-static void GLClearError(){
-    while(glGetError() != GL_NO_ERROR);
-}
-
-static void GLCheckError(){
-    while(GLenum error = glGetError()){
-        std::cout<<"[OpenGL Error] ("<<error<<")"<<std::endl;
-    }
-}
+#include "vertexBuffer.h"
+#include "indexBuffer.h"
+#include "vertexArray.h"
 
 struct ShaderProgramSource{
     std::string vertexSource;
@@ -112,6 +107,7 @@ int main(void)
         return -1;
     }
    
+    {
     float positions[] = {
         -0.5f, -0.5f,
          0.5f, -0.5f,
@@ -124,30 +120,30 @@ int main(void)
         2, 3, 0
     };
 
-    unsigned int buffer;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 6*2*sizeof(float), positions, GL_STATIC_DRAW);
+    VertexArray va;
+    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+
+    VertexBufferLayout layout;
+    layout.push<float>(2);
+    va.addBuffer(vb, layout);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
-    unsigned int ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    IndexBuffer ib(indices, 6);
 
     ShaderProgramSource source = parseShader("../resources/shaders/basic.shader");
-    std::cout<<"VERTEX"<<std::endl;
-    std::cout<<source.vertexSource<<std::endl;
-    std::cout<<"FRAGMENT"<<std::endl;
-    std::cout<<source.fragmentSource<<std::endl;
    
     unsigned int shader = createShader(source.vertexSource, source.fragmentSource);
     glUseProgram(shader);
 
     int location = glGetUniformLocation(shader, "u_Colour");
     assert(location != -1);
+
+    va.unbind();
+    glUseProgram(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     float r = 0.0f;
     float increment = 0.05f;
@@ -157,8 +153,13 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glUseProgram(shader);
         glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+        va.bind();
+        ib.bind();
+
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         if(r>1.0f){
             increment = -0.01f;
@@ -176,6 +177,7 @@ int main(void)
     }
 
     glDeleteProgram(shader);
+    }
 
     glfwTerminate();
     return 0;
