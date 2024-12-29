@@ -1,5 +1,7 @@
+#pragma once
 #include <string>
 #include <unordered_map>
+// #pragma once
 
 struct ShaderProgramSource{
     std::string vertexSource;
