@@ -23,6 +23,11 @@ void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
     }
 }
 
+void VertexArray::addIndexBuffer(const IndexBuffer& ib){
+    indexBufferElementsCount = ib.getCount();
+}
+
+
 void VertexArray::bind() const{
     GLCall(glBindVertexArray(m_RendererID));
 }

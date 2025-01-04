@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include <GLFW/glfw3.h>
 #include <iostream>
 
 void GLClearError(){
@@ -16,9 +17,8 @@ bool GLLogCall(const char* function, const char* file, int line){
 void Renderer::draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const{
     shader.bind();
     va.bind();
-    ib.bind();
 
-    GLCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+    GLCall(glDrawElements(GL_TRIANGLES, va.getIndexBufferElementsCount(), GL_UNSIGNED_INT, nullptr));
 
 }
 

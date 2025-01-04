@@ -12,6 +12,8 @@
 #include "shader.h"
 #include "vertexBufferLayout.h"
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 int main(void)
 {
     GLFWwindow* window;
@@ -30,8 +32,12 @@ int main(void)
         glfwTerminate();
         return -1;
     }
+
+    Renderer renderer;
+
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glfwSwapInterval(1);
 
@@ -51,31 +57,36 @@ int main(void)
 
     unsigned int indices[] = {
         0, 1, 2,
-        2, 3, 0
     };
 
+    float vertices[] = {
+    // positions         // colors
+     0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+     0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
+};   
+
     VertexArray va;
-    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+    VertexBuffer vb(vertices, 6 * 3 * sizeof(float));
 
     VertexBufferLayout layout;
-    layout.push<float>(2);
+    layout.push<float>(3);
+    layout.push<float>(3);
     va.addBuffer(vb, layout);
 
-    IndexBuffer ib(indices, 6);
+    IndexBuffer ib(indices, 3);
+    va.addIndexBuffer(ib);
+    va.unbind();
+
 
     Shader shader("../resources/shaders/basic.shader");
     shader.bind();
-    shader.setUniform4f("u_Colour", 0.0f, 0.3f, 0.8f, 1.0f);
+    // shader.setUniform4f("u_Colour", 0.0f, 0.3f, 0.8f, 1.0f);
 
-    va.unbind();
     shader.unbind();
     vb.unbind();
-    ib.bind();
-    
-    float r = 0.0f;
-    float increment = 0.05f;
+    // ib.bind();
 
-    Renderer renderer;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -84,18 +95,9 @@ int main(void)
         renderer.clear();
 
         shader.bind();
-        shader.setUniform4f("u_Colour", r, 0.3f, 0.8f, 1.0f); 
 
         renderer.draw(va, ib, shader);
 
-        if(r>1.0f){
-            increment = -0.01f;
-        }
-        else if(r<0.0f){
-            increment = 0.01f;
-        }
-
-        r+=increment;
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
@@ -107,4 +109,8 @@ int main(void)
 
     glfwTerminate();
     return 0;
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height){
+    glViewport(0, 0, width, height);
 }
