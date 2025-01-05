@@ -20,6 +20,9 @@ class Shader{
         void unbind() const;
 
         void setUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
+        void setUniform1f(const std::string &name, float f);
+        void setUniform1i(const std::string &name, int i);
+
         unsigned int getUniformLocation(const std::string& name);
 
         unsigned int compileShader(unsigned int type, const std::string& source);
