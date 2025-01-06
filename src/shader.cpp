@@ -1,5 +1,7 @@
 #include "shader.h"
 #include "renderer.h"
+// #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <sstream>
 #include <iostream>
@@ -105,6 +107,11 @@ void Shader::setUniform1f(const std::string &name, float f){
 void Shader::setUniform1i(const std::string &name, int i){
     GLCall(glUniform1i(getUniformLocation(name), i));
 }
+
+void Shader::setUniformMatrix4fv(const std::string &name, glm::mat4 matrix){
+    GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix));)
+}
+
 
 void Shader::bind() const{
     GLCall(glUseProgram(m_RendererID));
