@@ -11,6 +11,7 @@
 #include "vertexArray.h"
 #include "shader.h"
 #include "vertexBufferLayout.h"
+#include "texture.h"
 
 #include "stb_image.h"
 
@@ -167,72 +168,23 @@ int main(void)
     layout.push<float>(3);
     layout.push<float>(2);
     va.addBuffer(vb, layout);
+    vb.unbind();
 
     IndexBuffer ib(indices, sizeof(indices));
     va.addIndexBuffer(ib);
     va.unbind();
+    ib.unbind();
 
-    glEnable(GL_DEPTH_TEST);
+    GLCall(glEnable(GL_DEPTH_TEST));
 
     Shader shader("../resources/shaders/basic.shader");
-    // shader.bind();
-    // shader.setUniform1f("offset", 0.0f);
 
-    // shader.unbind();
-    vb.unbind();
-    // ib.bind();
-
-    unsigned int woodTexture;
-    glGenTextures(1, &woodTexture);
-    glBindTexture(GL_TEXTURE_2D, woodTexture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    stbi_set_flip_vertically_on_load(true); 
-
-
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load("../resources/textures/wood.jpg", &width, &height, &nrChannels, 0);
-
-    if(data){
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else{
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
-
-
-
-    unsigned int awesomeFace;
-    glGenTextures(1, &awesomeFace);
-    glBindTexture(GL_TEXTURE_2D, awesomeFace);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    data = stbi_load("../resources/textures/awesomeface.png", &width, &height, &nrChannels, 0);
-    if (data){
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else{
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
+    Texture woodTexture("../resources/textures/wood.jpg", "jpg");
+    Texture awesomeFace("../resources/textures/awesomeface.png", "png");
 
     shader.bind();
     shader.setUniform1i("woodTexture", 0);
     shader.setUniform1i("awesomeFace", 1);
-
-    const float radius = 20.0f;
-
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -246,15 +198,9 @@ int main(void)
         /* Render here */
         renderer.clear();
 
-        // shader.setUniform1f("offset", offset);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, woodTexture);
+        woodTexture.bind(0);
+        awesomeFace.bind(1);
 
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, awesomeFace);
-
-        float camX = sin(glfwGetTime()) * radius;
-        float camZ = cos(glfwGetTime()) * radius;
         glm::mat4 view;
         view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);  
 
