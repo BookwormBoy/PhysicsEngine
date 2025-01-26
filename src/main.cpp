@@ -13,6 +13,7 @@
 #include "vertexBufferLayout.h"
 #include "texture.h"
 #include "camera.h"
+#include "shape.h"
 
 #include "stb_image.h"
 
@@ -48,6 +49,7 @@ int main(void)
         return -1;
     }
 
+glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);  
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Hello World", NULL, NULL);
     if (!window)
@@ -76,114 +78,17 @@ int main(void)
    
     {
     
-    
-    float vertices[] = {
-        //positions            //texture coords
-
-        //front face
-        -0.5f, -0.5f,  0.5f,     0.0f, 0.0f, //bottom left
-        -0.5f,  0.5f,  0.5f,     0.0f, 1.0f, //top left
-         0.5f,  0.5f,  0.5f,     1.0f, 1.0f, //top right
-         0.5f, -0.5f,  0.5f,     1.0f, 0.0f, //bottom right
-
-         //left face
-        -0.5f, -0.5f, -0.5f,     0.0f, 0.0f, //bottom left
-        -0.5f,  0.5f, -0.5f,     0.0f, 1.0f, //top left
-        -0.5f,  0.5f,  0.5f,     1.0f, 1.0f, //top right
-        -0.5f, -0.5f,  0.5f,     1.0f, 0.0f, //bottom right
-
-         //right face
-         0.5f, -0.5f,  0.5f,     0.0f, 0.0f, //bottom left
-         0.5f,  0.5f,  0.5f,     0.0f, 1.0f, //top left
-         0.5f,  0.5f, -0.5f,     1.0f, 1.0f, //top right
-         0.5f, -0.5f, -0.5f,     1.0f, 0.0f, //bottom right
-
-         //top face
-        -0.5f,  0.5f,  0.5f,     0.0f, 0.0f, //bottom left
-        -0.5f,  0.5f, -0.5f,     0.0f, 1.0f, //top left
-         0.5f,  0.5f, -0.5f,     1.0f, 1.0f, //top right
-         0.5f,  0.5f,  0.5f,     1.0f, 0.0f, //bottom right
-
-         //bottom face
-        -0.5f, -0.5f, -0.5f,     0.0f, 0.0f, //bottom left
-        -0.5f, -0.5f,  0.5f,     0.0f, 1.0f, //top left
-         0.5f, -0.5f,  0.5f,     1.0f, 1.0f, //top right
-         0.5f, -0.5f, -0.5f,     1.0f, 0.0f, //bottom right
-
-         //back face
-         0.5f, -0.5f, -0.5f,     0.0f, 0.0f, //bottom left
-         0.5f,  0.5f, -0.5f,     0.0f, 1.0f, //top left
-        -0.5f,  0.5f, -0.5f,     1.0f, 1.0f, //top right
-        -0.5f, -0.5f, -0.5f,     1.0f, 0.0f, //bottom right
-        
-
-    };
-
-    unsigned int stride = 4;
-
-    unsigned int indices[] = {
-        //front face
-        (stride*0)+0, (stride*0)+1, (stride*0)+3,
-        (stride*0)+1, (stride*0)+2, (stride*0)+3,
-
-       //left face
-        (stride*1)+0, (stride*1)+1, (stride*1)+3,
-        (stride*1)+1, (stride*1)+2, (stride*1)+3,
-
-        //right face
-        (stride*2)+0, (stride*2)+1, (stride*2)+3,
-        (stride*2)+1, (stride*2)+2, (stride*2)+3,
-
-        //top face
-        (stride*3)+0, (stride*3)+1, (stride*3)+3,
-        (stride*3)+1, (stride*3)+2, (stride*3)+3,
-
-        //bottom face
-        (stride*4)+0, (stride*4)+1, (stride*4)+3,
-        (stride*4)+1, (stride*4)+2, (stride*4)+3,
-
-        //back face
-        (stride*5)+0, (stride*5)+1, (stride*5)+3,
-        (stride*5)+1, (stride*5)+2, (stride*5)+3,
-    };
-
-    glm::vec3 cubePositions[] = {
-    glm::vec3( 0.0f,  0.0f,  0.0f), 
-    glm::vec3( 2.0f,  5.0f, -15.0f), 
-    glm::vec3(-1.5f, -2.2f, -2.5f),  
-    glm::vec3(-3.8f, -2.0f, -12.3f),  
-    glm::vec3( 2.4f, -0.4f, -3.5f),  
-    glm::vec3(-1.7f,  3.0f, -7.5f),  
-    glm::vec3( 1.3f, -2.0f, -2.5f),  
-    glm::vec3( 1.5f,  2.0f, -2.5f), 
-    glm::vec3( 1.5f,  0.2f, -1.5f), 
-    glm::vec3(-1.3f,  1.0f, -1.5f)  
-};
-
-    VertexArray va;
-    VertexBuffer vb(vertices, sizeof(vertices));
-
-    VertexBufferLayout layout;
-    layout.push<float>(3);
-    layout.push<float>(2);
-    va.addBuffer(vb, layout);
-    vb.unbind();
-
-    IndexBuffer ib(indices, sizeof(indices));
-    va.addIndexBuffer(ib);
-    va.unbind();
-    ib.unbind();
 
     GLCall(glEnable(GL_DEPTH_TEST));
 
     Shader shader("../resources/shaders/basic.shader");
 
-    Texture woodTexture("../resources/textures/wood.jpg", "jpg");
-    Texture awesomeFace("../resources/textures/awesomeface.png", "png");
+    Texture woodTexture("../resources/textures/wood.jpg", "jpg", "texture1");
+    Texture awesomeFace("../resources/textures/awesomeface.png", "png", "texture2");
 
-    shader.bind();
-    shader.setUniform1i("woodTexture", 0);
-    shader.setUniform1i("awesomeFace", 1);
+    Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.3f, 0.5f), 40.0f);
+    cube.addTexture(woodTexture);
+    cube.addTexture(awesomeFace);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -197,30 +102,10 @@ int main(void)
         /* Render here */
         renderer.clear();
 
-        woodTexture.bind(0);
-        awesomeFace.bind(1);
 
-        glm::mat4 view;
-        view = camera.getViewMatrix();
-
-        glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-
-        shader.setUniformMatrix4fv("view", view);
-        shader.setUniformMatrix4fv("projection", projection);
-
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            // calculate the model matrix for each object and pass it to shader before drawing
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.setUniformMatrix4fv("model", model);
-
-            renderer.draw(va, shader);
-        }
-
+        renderer.setViewMatrix(camera.getViewMatrix());
+        renderer.setProjectionMatrix(glm::perspective(glm::radians(camera.fov), 800.0f / 600.0f, 0.1f, 100.0f));
+        renderer.draw(cube, shader);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

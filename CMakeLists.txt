@@ -12,7 +12,20 @@ cmake_policy(SET CMP0072 NEW)
 add_subdirectory(glfw)
 
 # Add your source files
-add_executable(engine src/main.cpp src/glad.c src/renderer.cpp src/vertexBuffer.cpp src/indexBuffer.cpp src/vertexArray.cpp src/vertexBufferLayout.cpp src/shader.cpp src/stb_image.cpp src/texture.cpp src/camera.cpp)
+add_executable(engine 
+                src/main.cpp 
+                src/glad.c 
+                src/renderer.cpp 
+                src/vertexBuffer.cpp 
+                src/indexBuffer.cpp 
+                src/vertexArray.cpp 
+                src/vertexBufferLayout.cpp 
+                src/shader.cpp 
+                src/stb_image.cpp 
+                src/texture.cpp 
+                src/camera.cpp
+                src/shape.cpp
+                src/cube.cpp)
 
 target_include_directories(engine PRIVATE include)
 

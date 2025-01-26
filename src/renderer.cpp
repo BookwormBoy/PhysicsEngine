@@ -14,14 +14,23 @@ bool GLLogCall(const char* function, const char* file, int line){
     return true;
 }
 
-void Renderer::draw(const VertexArray& va, const Shader& shader) const{
+void Renderer::draw(Shape& shape, Shader& shader) const{
     shader.bind();
-    va.bind();
-
-    GLCall(glDrawElements(GL_TRIANGLES, va.getIndexBufferElementsCount(), GL_UNSIGNED_INT, nullptr));
-
+    shape.bindTextures(shader);
+    shader.setUniformMatrix4fv("view", viewMatrix);
+    shader.setUniformMatrix4fv("projection", projectionMatrix);
+    shader.setUniformMatrix4fv("model", shape.getModelMatrix());
+    shape.draw();
 }
 
 void Renderer::clear() const{
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
+
+void Renderer::setViewMatrix(glm::mat4 view){
+    viewMatrix = view;
+}
+
+void Renderer::setProjectionMatrix(glm::mat4 projection){
+    projectionMatrix = projection;
 }

@@ -1,9 +1,11 @@
 #include "vertexArray.h"
 #include "vertexBufferLayout.h"
 #include "renderer.h"
+#include "iostream"
 
 VertexArray::VertexArray(){
     GLCall(glGenVertexArrays(1, &m_RendererID);)
+    GLCall(glBindVertexArray(m_RendererID));
 }
 
 VertexArray::~VertexArray(){
@@ -30,8 +32,10 @@ void VertexArray::addIndexBuffer(const IndexBuffer& ib){
 
 void VertexArray::bind() const{
     GLCall(glBindVertexArray(m_RendererID));
+
 }
 
 void VertexArray::unbind() const{
     GLCall(glBindVertexArray(0));
+
 }

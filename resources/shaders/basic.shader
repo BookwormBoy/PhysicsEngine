@@ -25,10 +25,10 @@ in vec2 texCoord;
 
 out vec4 fragColour;
 
-uniform sampler2D woodTexture;
-uniform sampler2D awesomeFace;
+uniform sampler2D texture1;
+uniform sampler2D texture2;
 
 void main()
 {
-   fragColour = mix(texture(woodTexture, texCoord), texture(awesomeFace, texCoord), 0.2);
+   fragColour = mix(texture(texture1, texCoord), texture(texture2, texCoord), 0.2);
 };

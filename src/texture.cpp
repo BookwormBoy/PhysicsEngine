@@ -1,9 +1,11 @@
 #include "texture.h"
-#include "renderer.h"
 #include "stb_image.h"
+#include "renderer.h"
 #include <iostream>
 
-Texture::Texture(const std::string& texturePath, const std::string& imageType){
+Texture::Texture(const std::string& texturePath, const std::string& imageType, const std::string& name){
+
+    this->name = name;
     GLCall(glGenTextures(1, &m_RendererID));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
 
