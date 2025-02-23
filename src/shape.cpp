@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 void Shape::addTexture(Texture texture){
     textures.push_back(texture);
@@ -19,5 +20,9 @@ glm::mat4 Shape::getModelMatrix(){
     model = glm::translate(model, position);
     model = glm::rotate(model, glm::radians(angle), axis);
     return model;
+}
+
+void Shape::setPosition(Vector3 v){
+    position = glm::vec3(v.x, v.y, v.z);
 }
 

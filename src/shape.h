@@ -5,6 +5,7 @@
 #include "texture.h"
 #include <vector>
 #include <iostream>
+#include "core.h"
 
 class Shape{
     protected:
@@ -24,6 +25,7 @@ class Shape{
         void bindTextures(Shader& shader);
         virtual void draw() = 0;
         glm::mat4 getModelMatrix();
+        void setPosition(Vector3 v);
 };
 
 class Cube : public Shape{    

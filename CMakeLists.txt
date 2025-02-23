@@ -25,7 +25,9 @@ add_executable(engine
                 src/texture.cpp 
                 src/camera.cpp
                 src/shape.cpp
-                src/cube.cpp)
+                src/cube.cpp
+                src/particle.cpp
+                src/core.cpp)
 
 target_include_directories(engine PRIVATE include)
 

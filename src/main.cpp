@@ -15,6 +15,8 @@
 #include "camera.h"
 #include "shape.h"
 
+#include "ballistic.h"
+
 #include "stb_image.h"
 
 #include <glm/glm.hpp>
@@ -24,7 +26,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow *window, Texture& texture1, Texture& texture2);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -33,7 +35,10 @@ float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+std::vector<struct Ballistic*> ballistics;
+float last_shot = 0;
+
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -75,6 +80,7 @@ glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
         std::cerr << "Failed to initialize GLAD!" << std::endl;
         return -1;
     }
+
    
     {
     
@@ -86,9 +92,9 @@ glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     Texture woodTexture("../resources/textures/wood.jpg", "jpg", "texture1");
     Texture awesomeFace("../resources/textures/awesomeface.png", "png", "texture2");
 
-    Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.3f, 0.5f), 40.0f);
-    cube.addTexture(woodTexture);
-    cube.addTexture(awesomeFace);
+    // Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.3f, 0.5f), 40.0f);
+    // cube.addTexture(woodTexture);
+    // cube.addTexture(awesomeFace);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -98,14 +104,26 @@ glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        processInput(window);
+        processInput(window, woodTexture, awesomeFace);
         /* Render here */
         renderer.clear();
 
 
         renderer.setViewMatrix(camera.getViewMatrix());
         renderer.setProjectionMatrix(glm::perspective(glm::radians(camera.fov), 800.0f / 600.0f, 0.1f, 100.0f));
-        renderer.draw(cube, shader);
+
+        for(unsigned int i=0; i<ballistics.size(); i++){
+            ballistics[i]->particle.integrate(deltaTime);
+            ballistics[i]->cube.setPosition(ballistics[i]->particle.getPosition());
+            ballistics[i]->time_to_live-=deltaTime;
+            if(ballistics[i]->time_to_live<0){
+                ballistics.erase(ballistics.begin()+i); //remove the ballistic if it has exceeded its time to live
+            }
+            else{
+                renderer.draw(ballistics[i]->cube, shader);
+            }
+        }
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -116,9 +134,61 @@ glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     return 0;
 }
 
-void processInput(GLFWwindow *window){
+void processInput(GLFWwindow *window, Texture& texture1, Texture& texture2){
+    
+    float currentFrame = static_cast<float>(glfwGetTime());
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if((glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) && (currentFrame-last_shot>1)){ 
+        Ballistic* pistol = new Ballistic(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.3f, 0.5f), 40.0f);
+        pistol->particle.setMass(2.0f); // 2.0kg
+        pistol->particle.setVelocity(Vector3(0.0f, 0.0f, -500.0f)); // 35m/s
+        pistol->particle.setAcceleration(Vector3(0.0f, -1.0f, 0.0f));
+        pistol->particle.setDamping(0.99f);
+        pistol->cube.addTexture(texture1);
+        pistol->cube.addTexture(texture2);
+        last_shot = static_cast<float>(glfwGetTime());
+        ballistics.push_back(pistol);
+
+    }
+
+    if((glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) && (currentFrame-last_shot>1)){ 
+        Ballistic* artillery = new Ballistic(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.3f, 0.5f), 40.0f);
+        artillery->particle.setMass(200.0f); // 200.0kg
+        artillery->particle.setVelocity(Vector3(0.0f, 0.0f, -50.0f)); // 50m/s
+        artillery->particle.setAcceleration(Vector3(0.0f, -20.0f, 0.0f));
+        artillery->particle.setDamping(0.99f);
+        artillery->cube.addTexture(texture1);
+        artillery->cube.addTexture(texture2);
+        last_shot = static_cast<float>(glfwGetTime());
+        ballistics.push_back(artillery);   
+    }
+
+    if((glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) && (currentFrame-last_shot>1)){ 
+        Ballistic* fireball = new Ballistic(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.3f, 0.5f), 40.0f);
+        fireball->particle.setMass(1.0f); // 1.0kg
+        fireball->particle.setVelocity(Vector3(0.0f, 0.0f, -5.0f)); // 5m/s
+        fireball->particle.setAcceleration(Vector3(0.0f, 0.6f, 0.0f));
+        fireball->particle.setDamping(0.99f);
+        fireball->cube.addTexture(texture1);
+        fireball->cube.addTexture(texture2);
+        last_shot = static_cast<float>(glfwGetTime());   
+        ballistics.push_back(fireball);
+    }
+
+    if((glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) && (currentFrame-last_shot>1)){ 
+        Ballistic* laser = new Ballistic(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.3f, 0.5f), 40.0f);
+        laser->particle.setMass(0.1f); // 0.1kg
+        laser->particle.setVelocity(Vector3(0.0f, 0.0f, -100.0f)); // 100m/s
+        laser->particle.setAcceleration(Vector3(0.0f, 0.0f, 0.0f)); // no gravity
+        laser->particle.setDamping(0.99f);
+        laser->cube.addTexture(texture1);
+        laser->cube.addTexture(texture2);
+        last_shot = static_cast<float>(glfwGetTime());  
+        ballistics.push_back(laser);
+    }
 
     camera.processKeyboard(window, deltaTime);
 }

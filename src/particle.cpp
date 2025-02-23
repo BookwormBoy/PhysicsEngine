@@ -1,6 +1,7 @@
 #include "particle.h"
 #include<math.h>
 #include <float.h>
+#include<iostream>
 
 #define real_pow powf
 
@@ -34,7 +35,7 @@ real Particle::getDamping(){
     return this->damping;
 }
 
-void Particle::setPosition(Vector3& position){
+void Particle::setPosition(Vector3 position){
     this->position=position;
 }
 
@@ -42,7 +43,7 @@ Vector3 Particle::getPosition(){
     return this->position;
 }
 
-void Particle::setVelocity(Vector3& velocity){
+void Particle::setVelocity(Vector3 velocity){
     this->velocity=velocity;
 }
 
@@ -50,7 +51,7 @@ Vector3 Particle::getVelocity(){
     return this->velocity;
 }
 
-void Particle::setAcceleration(Vector3& acceleration){
+void Particle::setAcceleration(Vector3 acceleration){
     this->acceleration=acceleration;
 }
 

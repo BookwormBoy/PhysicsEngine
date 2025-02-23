@@ -6,7 +6,7 @@ Vector3::Vector3(){
     z=0;
 }
 
-Vector3::Vector3(real x, real z, real y){
+Vector3::Vector3(real x, real y, real z){
     this->x=x;
     this->y=y;
     this->z=z;
