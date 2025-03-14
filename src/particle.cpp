@@ -63,7 +63,7 @@ void Particle::clearAccumulator(){
     forceAccum.clear();
 }
 
-void Particle::addForce(Vector3& force){
+void Particle::addForce(const Vector3& force){
     this->forceAccum+=force;
 }
 
@@ -75,4 +75,6 @@ void Particle::integrate(real duration){
 
     velocity.addScaledVector(resultingAcc, duration);
     velocity *= real_pow(damping, duration);
+
+    clearAccumulator();
 }

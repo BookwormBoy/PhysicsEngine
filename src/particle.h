@@ -22,7 +22,7 @@ class Particle{
         void setAcceleration(Vector3 acceleration);
         Vector3 getAcceleration();
         void clearAccumulator();
-        void addForce(Vector3& force);
+        void addForce(const Vector3& force);
         void integrate(real duration);
 
 };

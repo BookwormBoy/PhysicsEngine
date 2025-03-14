@@ -22,6 +22,7 @@ class Vector3{
         void componentVectorUpdate(const Vector3& vector);
         real scalarProduct(const Vector3& vector);
         real operator*(const Vector3& vector);
+        Vector3 operator*(real scale);
         Vector3 vectorProduct(const Vector3& vector);
         void operator%=(const Vector3 &vector);
         Vector3 operator%(const Vector3& vector);

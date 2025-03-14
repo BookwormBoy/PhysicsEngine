@@ -92,9 +92,6 @@ glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     Texture woodTexture("../resources/textures/wood.jpg", "jpg", "texture1");
     Texture awesomeFace("../resources/textures/awesomeface.png", "png", "texture2");
 
-    // Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.3f, 0.5f), 40.0f);
-    // cube.addTexture(woodTexture);
-    // cube.addTexture(awesomeFace);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))

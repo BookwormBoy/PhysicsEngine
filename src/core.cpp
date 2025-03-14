@@ -80,6 +80,10 @@ real Vector3::operator*(const Vector3& vector){
     return x*vector.x+y*vector.y+z*vector.z;
 }
 
+Vector3 Vector3::operator*(real scale){
+    return Vector3(x*scale, y*scale, z*scale);
+}
+
 Vector3 Vector3::vectorProduct(const Vector3& vector){
     return Vector3(y*vector.z-z*vector.y,
                     z*vector.x-x*vector.z,
