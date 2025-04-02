@@ -11,6 +11,7 @@ class Particle{
         real damping;
     public: 
         real getMass();
+        real getInverseMass();
         bool hasFiniteMass();
         void setMass(real mass);
         void setDamping(real damping);

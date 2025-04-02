@@ -23,6 +23,10 @@ real Particle::getMass(){
     }
 }
 
+real Particle::getInverseMass(){
+    return inverseMass;
+}
+
 bool Particle::hasFiniteMass(){
     return inverseMass>0;
 }

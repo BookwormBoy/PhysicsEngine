@@ -1,4 +1,5 @@
 #include "pfgen.h"
+#include <cmath>
 
 void ParticleForceRegistry::add(Particle* particle, ParticleForceGenerator *fg){
     registrations.push_back({particle, fg});
@@ -38,4 +39,69 @@ void ParticleDrag::updateForce(Particle *particle, real duration){
     force.normalize();
     force *= -dragCoeff;
     particle->addForce(force);
+}
+
+ParticleSpring::ParticleSpring(Particle *other, real sc, real rl) : other(other), springConstant(sc), restLength(rl){}
+
+void ParticleSpring::updateForce(Particle *particle, real duration){
+    Vector3 force = particle->getPosition();
+    force -= other->getPosition();
+
+    real magnitude = force.magnitude();
+    magnitude = std::fabs(magnitude - restLength);
+    magnitude *= springConstant;
+
+    force.normalize();
+    force *= -magnitude;
+    particle->addForce(force);
+}
+
+ParticleAnchoredSpring::ParticleAnchoredSpring(Vector3* anchor, real sc, real rl) : anchor(anchor), springConstant(sc), restLength(rl){}
+
+void ParticleAnchoredSpring::updateForce(Particle *particle, real duration){
+    Vector3 force = particle->getPosition();
+    force -= *anchor;
+
+    real magnitude = force.magnitude();
+    magnitude = std::fabs(magnitude - restLength);
+    magnitude *= springConstant;
+
+    force.normalize();
+    force *= -magnitude;
+    particle->addForce(force);
+}
+
+ParticleBungee::ParticleBungee(Particle *other, real sc, real rl) : other(other), springConstant(sc), restLength(rl){}
+
+void ParticleBungee::updateForce(Particle *particle, real duration){
+    Vector3 force = particle->getPosition();
+    force -= other->getPosition();
+
+    real magnitude = force.magnitude();
+    if(magnitude <=restLength) return;
+    magnitude = std::fabs(magnitude - restLength);
+    magnitude *= springConstant;
+
+    force.normalize();
+    force *= -magnitude;
+    particle->addForce(force);
+}
+
+ParticleBuoyancy::ParticleBuoyancy(real maxDepth, real volume, real waterHeight, real liquidDensity) : maxDepth(maxDepth), volume(volume), waterHeight(waterHeight), liquidDensity(liquidDensity){}
+
+void ParticleBuoyancy::updateForce(Particle* particle, real duration){
+    real depth = particle->getPosition().y;
+
+    if (depth >= waterHeight + maxDepth) return;
+
+    Vector3 force(0,0,0);
+    if (depth <= waterHeight - maxDepth){
+        force.y = liquidDensity * volume;
+        particle->addForce(force);
+        return;
+    }
+
+    force.y = liquidDensity * volume * (depth - maxDepth - waterHeight) / 2 * maxDepth;
+    particle->addForce(force);
+
 }
