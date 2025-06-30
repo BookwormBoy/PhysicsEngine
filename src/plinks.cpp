@@ -1,5 +1,10 @@
 #include "plinks.h"
 
+ParticleLink::ParticleLink(Particle* p1, Particle* p2){
+    particle[0]=p1;
+    particle[1]=p2;
+}
+
 real ParticleLink::currentLength() const{
     Vector3 relativePos = particle[0]->getPosition() -
                           particle[1]->getPosition();
@@ -29,7 +34,9 @@ unsigned ParticleCable::fillContact(ParticleContact *contact,
     return 1;
 }
 
-unsigned ParticleRod::addContact(ParticleContact *contact, unsigned limit) const{
+ParticleRod::ParticleRod(Particle* p1, Particle* p2, real length): length(length), ParticleLink(p1, p2){};
+
+unsigned ParticleRod::fillContact(ParticleContact *contact, unsigned limit) const{
     real currentLen = currentLength();
 
     if (currentLen == length){
@@ -50,9 +57,74 @@ unsigned ParticleRod::addContact(ParticleContact *contact, unsigned limit) const
         contact->contactNormal = normal * -1;
         contact->penetration = length - currentLen;
     }
+    
 
     contact->restitution = 0;
 
     return 1;
 }
+
+real ParticleConstraint::currentLength() const
+{
+    Vector3 relativePos = particle->getPosition() - anchor;
+    return relativePos.magnitude();
+}
+
+unsigned ParticleRodConstraint::fillContact(ParticleContact *contact,unsigned limit) const{
+    real currentLen = currentLength();
+
+    if (currentLen == length)
+    {
+    return 0;
+    }
+
+    contact->particle[0] = particle;
+    contact->particle[1] = nullptr;
+    
+    Vector3 normal = anchor - particle->getPosition();
+    normal.normalize();
+
+    if (currentLen > length) {
+    contact->contactNormal = normal;
+    contact->penetration = currentLen - length;
+    } else {
+    contact->contactNormal = normal * -1;
+    contact->penetration = length - currentLen;
+    }
+
+    contact->restitution = 0;
+
+    return 1;
+}
+
+VerletRod::VerletRod(Particle* p1, Particle* p2, real length): length(length){
+    particle[0]=p1;
+    particle[1]=p2;
+}
+
+
+void VerletRod::solveConstraint(){
+    Vector3 delta = particle[0]->getPosition() - particle[1]->getPosition();
+    if(delta.magnitude()==0) return;
+    real error = delta.magnitude() - length;
+    delta.normalize();
+    delta*=error/2;
+    particle[0]->setPosition(particle[0]->getPosition()-delta);
+    particle[1]->setPosition(particle[1]->getPosition()+delta);
+}
+
+VerletAnchor::VerletAnchor(Particle* p1, Vector3 anchor, real length): length(length), anchor(anchor){
+    p=p1;
+}
+
+
+void VerletAnchor::solveConstraint(){
+    Vector3 delta = p->getPosition() - anchor;
+    if(delta.magnitude()==0) return;
+    real error = delta.magnitude() - length;
+    delta.normalize();
+    delta*=error;
+    p->setPosition(p->getPosition()-delta);
+}
+
 

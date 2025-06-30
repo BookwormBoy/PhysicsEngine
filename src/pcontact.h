@@ -26,6 +26,7 @@ class ParticleContactResolver{
 
 class ParticleContactGenerator{
     public:
-        virtual unsigned addContact(ParticleContact *contact, unsigned limit) const = 0;
+        virtual unsigned fillContact(ParticleContact *contact, unsigned limit) const = 0;
 };
+
 

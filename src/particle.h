@@ -5,6 +5,7 @@ class Particle{
     protected:
         real inverseMass;
         Vector3 position;
+        Vector3 prevPosition;
         Vector3 velocity;
         Vector3 acceleration;
         Vector3 forceAccum;
@@ -18,6 +19,8 @@ class Particle{
         real getDamping();
         void setPosition(Vector3 position);
         Vector3 getPosition();
+        void setPrevPosition(Vector3 position);
+        Vector3 getPrevPosition();
         void setVelocity(Vector3 velocity);
         Vector3 getVelocity();
         void setAcceleration(Vector3 acceleration);
@@ -25,5 +28,6 @@ class Particle{
         void clearAccumulator();
         void addForce(const Vector3& force);
         void integrate(real duration);
+        void verletIntegrate(real duration);
 
 };

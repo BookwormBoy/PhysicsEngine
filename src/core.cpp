@@ -1,5 +1,6 @@
 #include "core.h"
 #include <cmath>
+#include <iostream>
 Vector3::Vector3(){
     x=0;
     y=0;
@@ -41,7 +42,7 @@ void Vector3::operator+=(const Vector3& v){
     z+=v.z;
 }
 
-Vector3 Vector3::operator+(const Vector3& v){
+Vector3 Vector3::operator+(const Vector3& v) const{
     return Vector3(x+v.x, y+v.y, z+v.z);
 }
 
@@ -51,7 +52,7 @@ void Vector3::operator-=(const Vector3& v){
     z-=v.z;
 }
 
-Vector3 Vector3::operator-(const Vector3& v){
+Vector3 Vector3::operator-(const Vector3& v) const{
     return Vector3(x-v.x, y-v.y, z-v.z);
 }
 
@@ -76,7 +77,7 @@ real Vector3::scalarProduct(const Vector3& vector){
     return x*vector.x+y*vector.y+z*vector.z;
 }
 
-real Vector3::operator*(const Vector3& vector){
+real Vector3::operator*(const Vector3& vector) const{
     return x*vector.x+y*vector.y+z*vector.z;
 }
 

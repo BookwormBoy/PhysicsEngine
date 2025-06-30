@@ -3,12 +3,14 @@
 #include "particle.h"
 #include "pfgen.h"
 #include "pcontact.h"
+#include "plinks.h"
 
 class ParticleWorld
 {
 public:
     typedef std::vector<Particle*> Particles;
     typedef std::vector<ParticleContactGenerator*> ContactGenerators;
+    typedef std::vector<ParticleLink*> ParticleLinks;
 
 protected:
     Particles particles;

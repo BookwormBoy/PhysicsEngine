@@ -47,6 +47,14 @@ Vector3 Particle::getPosition(){
     return this->position;
 }
 
+void Particle::setPrevPosition(Vector3 position){
+    this->position=prevPosition;
+}
+
+Vector3 Particle::getPrevPosition(){
+    return this->prevPosition;
+}
+
 void Particle::setVelocity(Vector3 velocity){
     this->velocity=velocity;
 }
@@ -72,13 +80,25 @@ void Particle::addForce(const Vector3& force){
 }
 
 void Particle::integrate(real duration){
+    if (inverseMass <= 0.0f) return;
+
+    // assert(duration > 0.0);
+
     position.addScaledVector(velocity, duration);
 
     Vector3 resultingAcc = acceleration;
     resultingAcc.addScaledVector(forceAccum, inverseMass);
+    // std::cout<<resultingAcc.y<<std::endl;
 
     velocity.addScaledVector(resultingAcc, duration);
+
     velocity *= real_pow(damping, duration);
 
     clearAccumulator();
+}
+
+void Particle::verletIntegrate(real duration){
+    Vector3 temp=position;
+    position = position + (position-prevPosition)*damping + acceleration*damping*duration*duration;
+    prevPosition=temp;
 }

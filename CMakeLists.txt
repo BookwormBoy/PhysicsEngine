@@ -13,7 +13,7 @@ add_subdirectory(glfw)
 
 # Add your source files
 add_executable(engine 
-                src/main.cpp 
+                src/cloth_main.cpp 
                 src/glad.c 
                 src/renderer.cpp 
                 src/vertexBuffer.cpp 
@@ -27,7 +27,10 @@ add_executable(engine
                 src/shape.cpp
                 src/cube.cpp
                 src/particle.cpp
-                src/core.cpp)
+                src/core.cpp
+                src/pcontact.cpp
+                src/plinks.cpp
+                src/cloth.cpp)
 
 target_include_directories(engine PRIVATE include)
 

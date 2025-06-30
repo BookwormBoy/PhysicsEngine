@@ -11,7 +11,7 @@ Shader::Shader(const std::string& filepath){
     m_FilePath = filepath;
     m_RendererID=0;
 
-    ShaderProgramSource source = parseShader("../resources/shaders/basic.shader");
+    ShaderProgramSource source = parseShader(m_FilePath);
     m_RendererID = createShader(source.vertexSource, source.fragmentSource);
 }
 

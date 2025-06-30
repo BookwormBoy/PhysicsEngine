@@ -14,14 +14,14 @@ class Vector3{
         void normalize();
         void operator*=(real value);
         void operator+=(const Vector3& v);
-        Vector3 operator+(const Vector3& v);
+        Vector3 operator+(const Vector3& v) const;
         void operator-=(const Vector3& v);
-        Vector3 operator-(const Vector3& v);
+        Vector3 operator-(const Vector3& v) const;
         void addScaledVector(const Vector3& vector, real scale);
         Vector3 componentProduct(const Vector3& vector);
         void componentVectorUpdate(const Vector3& vector);
         real scalarProduct(const Vector3& vector);
-        real operator*(const Vector3& vector);
+        real operator*(const Vector3& vector) const;
         Vector3 operator*(real scale);
         Vector3 vectorProduct(const Vector3& vector);
         void operator%=(const Vector3 &vector);

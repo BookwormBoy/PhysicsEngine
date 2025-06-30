@@ -3,6 +3,7 @@
 
 void ParticleContact::resolve(real duration){
     resolveVelocity(duration);
+    resolveInterpenetration(duration);
 }
 
 real ParticleContact::calculateSeparatingVelocity() const{
@@ -75,60 +76,56 @@ void ParticleContactResolver::setIterations(unsigned iterations){
 
 void ParticleContactResolver::resolveContacts(ParticleContact *contactArray, unsigned numContacts, real duration){
     unsigned i;
+
     iterationsUsed = 0;
-    while(iterationsUsed < iterations){
+    while(iterationsUsed < iterations)
+    {
+        // Find the contact with the largest closing velocity;
         real max = FLT_MAX;
         unsigned maxIndex = numContacts;
-        for (i = 0; i < numContacts; i++){
+        for (i = 0; i < numContacts; i++)
+        {
             real sepVel = contactArray[i].calculateSeparatingVelocity();
-            if (sepVel < max && (sepVel < 0)){
+            if (sepVel < max &&
+                (sepVel < 0 || contactArray[i].penetration > 0))
+            {
                 max = sepVel;
                 maxIndex = i;
-            }                               
+            }
         }
 
+        // Do we have anything worth resolving?
         if (maxIndex == numContacts) break;
 
+        // Resolve this contact
         contactArray[maxIndex].resolve(duration);
 
-        iterationsUsed++;
-    }
-
-    iterationsUsed=0;
-    while(iterationsUsed < iterations){
-        real max = FLT_MIN;
-        unsigned maxIndex = numContacts;
-        for (i = 0; i < numContacts; i++){
-            real penetration = contactArray[i].penetration;
-            if (penetration > max && (contactArray[i].penetration > 0)){
-                max = penetration;
-                maxIndex = i;
-            }                               
-        }
-
-        if (maxIndex == numContacts) break;
-        contactArray[maxIndex].resolveInterpenetration(duration);
-
+        // Update the interpenetrations for all particles
         Vector3 *move = contactArray[maxIndex].particleMovement;
-        for (i = 0; i < numContacts; i++){
-            if (contactArray[i].particle[0] == contactArray[maxIndex].particle[0]){
+        for (i = 0; i < numContacts; i++)
+        {
+            if (contactArray[i].particle[0] == contactArray[maxIndex].particle[0])
+            {
                 contactArray[i].penetration -= move[0] * contactArray[i].contactNormal;
             }
-            else if (contactArray[i].particle[0] == contactArray[maxIndex].particle[1]){
+            else if (contactArray[i].particle[0] == contactArray[maxIndex].particle[1])
+            {
                 contactArray[i].penetration -= move[1] * contactArray[i].contactNormal;
             }
-            if (contactArray[i].particle[1]){
-                if (contactArray[i].particle[1] == contactArray[maxIndex].particle[0]){
+            if (contactArray[i].particle[1])
+            {
+                if (contactArray[i].particle[1] == contactArray[maxIndex].particle[0])
+                {
                     contactArray[i].penetration += move[0] * contactArray[i].contactNormal;
                 }
-                else if (contactArray[i].particle[1] == contactArray[maxIndex].particle[1]){
+                else if (contactArray[i].particle[1] == contactArray[maxIndex].particle[1])
+                {
                     contactArray[i].penetration += move[1] * contactArray[i].contactNormal;
                 }
             }
         }
 
         iterationsUsed++;
-
     }
 }
 
