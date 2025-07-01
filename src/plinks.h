@@ -69,9 +69,9 @@ class VerletRod{
 class VerletAnchor{
     public:
         Particle* p;
+        Vector3 anchor;
         VerletAnchor(Particle* p, Vector3 anchor, real length);
         void solveConstraint();
     private:
-        Vector3 anchor;
         real length;
 };

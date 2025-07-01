@@ -15,6 +15,7 @@ class Cloth {
         ParticleContactResolver resolver;
         std::vector<ParticleContact> contacts;
         bool calculateIterations;
+        int iterations;
     public:
         std::vector<Particle*> particles;
         std::vector<ParticleRod*> constraints;
@@ -25,7 +26,7 @@ class Cloth {
         VertexArray va;
         VertexBuffer vb;
     
-        Cloth(int width, int height, real spacing, unsigned maxContacts, unsigned iterations=0);
+        Cloth(int width, int height, real spacing, unsigned maxContacts, int iterations);
         // ~Cloth();
 
         void update(real duration);

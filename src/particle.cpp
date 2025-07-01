@@ -47,8 +47,8 @@ Vector3 Particle::getPosition(){
     return this->position;
 }
 
-void Particle::setPrevPosition(Vector3 position){
-    this->position=prevPosition;
+void Particle::setPrevPosition(Vector3 pos){
+    this->prevPosition=pos;
 }
 
 Vector3 Particle::getPrevPosition(){

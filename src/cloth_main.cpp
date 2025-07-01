@@ -93,7 +93,7 @@ glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     GLCall(glEnable(GL_DEPTH_TEST));
 
     Shader shader("../resources/shaders/cloth.shader");
-    Cloth cloth(10, 10, 1, 10000, 0);
+    Cloth cloth(15, 15, 1, 10000, 20);
     
 
     // Texture woodTexture("../resources/textures/wood.jpg", "jpg", "texture1");
