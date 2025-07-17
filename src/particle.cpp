@@ -5,6 +5,16 @@
 
 #define real_pow powf
 
+Particle::Particle(real mass, Vector3 position, Vector3 velocity, Vector3 acceleration, real damping){
+    setMass(mass);
+    setPosition(position);
+    setPrevPosition(position);
+    setVelocity(velocity);
+    setAcceleration(acceleration);
+    setDamping(damping);
+}
+
+
 void Particle::setMass(real mass){
     if(mass==FLT_MAX){
         inverseMass=0;

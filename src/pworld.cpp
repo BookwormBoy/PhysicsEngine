@@ -20,7 +20,7 @@ unsigned ParticleWorld::generateContacts(){
     ParticleContact *nextContact = contacts;
 
     for (ContactGenerators::iterator g = contactGenerators.begin(); g != contactGenerators.end(); g++){
-        unsigned used =(*g)->addContact(nextContact, limit);
+        unsigned used =(*g)->fillContact(nextContact, limit);
         limit -= used;
         nextContact += used;
 

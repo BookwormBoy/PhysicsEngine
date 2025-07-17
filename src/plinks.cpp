@@ -1,4 +1,7 @@
 #include "plinks.h"
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
 
 ParticleLink::ParticleLink(Particle* p1, Particle* p2){
     particle[0]=p1;
@@ -105,10 +108,12 @@ VerletRod::VerletRod(Particle* p1, Particle* p2, real length): length(length){
 
 void VerletRod::solveConstraint(){
     Vector3 delta = particle[0]->getPosition() - particle[1]->getPosition();
-    if(delta.magnitude()==0) return;
     real error = delta.magnitude() - length;
+    // std::cout<<fabs(error)<<particle[0]->getPosition()<<" "<<particle[1]->getPosition()<<delta.magnitude()<<" "<<length<<std::endl;
+    if(fabs(error)< 1e-6) return;
+    // std::cout<<"HIIIIIIIIIII"<<std::endl;
     delta.normalize();
-    delta*=error/2;
+    delta*=error/2.0f;
     particle[0]->setPosition(particle[0]->getPosition()-delta);
     particle[1]->setPosition(particle[1]->getPosition()+delta);
 }
@@ -120,8 +125,10 @@ VerletAnchor::VerletAnchor(Particle* p1, Vector3 anchor, real length): length(le
 
 void VerletAnchor::solveConstraint(){
     Vector3 delta = p->getPosition() - anchor;
-    if(delta.magnitude()==0) return;
+
     real error = delta.magnitude() - length;
+    // std::cout<<error<<std::endl;
+
     delta.normalize();
     delta*=error;
     p->setPosition(p->getPosition()-delta);

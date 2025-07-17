@@ -1,4 +1,6 @@
 #pragma once
+#include <ostream>
+
 typedef float real;
 
 class Vector3{
@@ -27,4 +29,6 @@ class Vector3{
         void operator%=(const Vector3 &vector);
         Vector3 operator%(const Vector3& vector);
         void clear();
+
+        friend std::ostream& operator<<(std::ostream& os, const Vector3& v);
 };

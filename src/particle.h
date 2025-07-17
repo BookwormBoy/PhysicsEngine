@@ -11,6 +11,7 @@ class Particle{
         Vector3 forceAccum;
         real damping;
     public: 
+        Particle(real mass, Vector3 position, Vector3 velocity, Vector3 acceleration, real damping);
         real getMass();
         real getInverseMass();
         bool hasFiniteMass();
